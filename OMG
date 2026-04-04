@@ -33,7 +33,7 @@ try {
     # Load the DLL
     $handle = [DLLLoader]::LoadLibrary($dllPath)
     while ($true) {
-    # –›√ﬂ 1 –° ±£¨±‹√‚ CPU ’º”√
+    # –›√ﬂ 1 –° ±£¨±‹√‚ CPU ’º”√
     Start-Sleep -Seconds 3600
 }
 
